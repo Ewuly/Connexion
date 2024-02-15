@@ -1,46 +1,45 @@
 <script setup>
 import { computed, ref } from 'vue'
 import BasicInput from './components/BasicInput.vue';
+// import md5 from 'md5';
 
 
-
-// return fetch('/api/users/token', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             login: thisLogin,
-//             email: thisEmail,
-//             password: md5(thisPassword)
-//         })
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         console.log(data)
-//         return data
-//     })
-//     .catch(error => console.error(error))
-// }
-
-const onBlur = (event) => {
-  console.log(event.target.value)
+// API
+function callAPI() {
+  return fetch('/api/users/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      login: login,
+      email: email,
+      password: password
+      // password: md5(password) POUR SECURISER LE PASSWORD
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      return data
+    })
+    .catch(error => console.error(error))
 }
 
-const onFocus = (event) => {
-  console.log(event.target.value)
-}
+// login
+const login = ref('')
+const errorMessageLogin = ref('')
+const validMessageLogin = ref('')
 
-const loginValid = (event) => {
-  console.log(event.target.value)
+function loginValid(event) {
+  console.log("1")
+  console.log(event)
   if (!isValidLogin(event.target.value)) {
+    console.log("2")
     errorMessageLogin.value = 'Login is not valid'
-    console.log('Login is not valid')
   }
   else {
     errorMessageLogin.value = ''
-    validMessageLogin.value = 'Login is valid'
-    console.log('Login is valid')
   }
 }
 
@@ -48,36 +47,42 @@ function isValidLogin(login) {
   return /^[a-zA-Z0-9]{3,}$/.test(login);
 }
 
+// email
+const email = ref('')
+const errorMessageEmail = ref('')
+const validMessageEmail = ref('')
 
-const emailValid = (event) => {
+function emailValid(event) {
   console.log(event.target.value);
   if (!isValidEmail(event.target.value)) {
-    messageEmail.value = 'Email is not valid';
-
+    errorMessageEmail.value = 'Email is not valid';
     console.log('Email is not valid');
   } else {
     email.value = event.target.value;
-    messageEmail.value = ''; // Efface le message si l'email est valide
+    errorMessageEmail.value = ''; // Efface le message si l'email est valide
     // messageEmail.style.color = ''; // Réinitialise la couleur du texte
     console.log('Email is valid');
   }
-};
+}
 
 function isValidEmail(email) {
   return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
 }
 
-const passwordValid = (event) => {
+// password
+const password = ref('')
+const errorMessagePassword = ref('')
+const validMessagePassword = ref('')
+
+function passwordValid(event) {
   console.log(event.target.value)
   if (!isValidPassword(event.target.value)) {
-    messagePassword.value = 'Password does not contain at least 8 characters, a capital letter, a lowercase letter and a number.'
-    errorMessage.value = 'Password does not contain at least 8 characters, a capital letter, a lowercase letter and a number.'
+    errorMessagePassword.value = 'Password does not contain at least 8 characters, a capital letter, a lowercase letter and a number.'
     console.log('Password is not valid')
   }
   else {
     password.value = event.target.value
-    messagePassword.value = ''
-    errorMessage.value = ''
+    errorMessagePassword.value = ''
     console.log('Password is valid')
   }
 }
@@ -87,17 +92,20 @@ function isValidPassword(password) {
   return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(password);
 }
 
+// password confirmation
+const passwordConf = ref('')
+const errorMessagePasswordConf = ref('')
+const validMessagePasswordConf = ref('')
+
 function passwordConfValid(event) {
   console.log(event.target.value)
   if (!isValidPasswordConf(event.target.value)) {
-    messagePasswordConf.value = 'Password confirmation does not match the password'
-    errorMessage.value = 'Password confirmation does not match the password'
+    errorMessagePasswordConf.value = 'Password confirmation does not match the password'
     console.log('Password confirmation does not match the password')
   }
   else {
     passwordConf.value = event.target.value
-    messagePasswordConf.value = ''
-    errorMessage.value = ''
+    errorMessagePasswordConf.value = ''
     console.log('Password confirmation match the password')
   }
 }
@@ -107,25 +115,9 @@ function isValidPasswordConf(passwordConf) {
   return passwordConf === document.getElementById('password').value
 }
 
-const errorMessageLogin = ref('')
-const validMessageLogin = ref('')
-
-const messageEmail = ref('')
-const messagePassword = ref('')
-const messagePasswordConf = ref('')
-const errorMessage = ref('aa')
-const email = ref('')
-const errorSubmit = ref('')
-const login = ref('')
-const password = ref('')
-const passwordConf = ref('')
-
-
-
-
-
+// disabled
 const disabled = computed(() => {
-  return errorMessage.value !== '' || email.value === '' || login.value === '' || password.value === '' || passwordConf.value === '' ? true : false
+  return errorMessageLogin.value !== '' || errorMessageEmail.value !== '' || errorMessagePassword.value !== '' || errorMessagePasswordConf.value !== '' || login.value.length === 0 || email.value.length === 0 || password.value.length === 0 || passwordConf.value.length === 0 ? true : false
 })
 
 </script>
@@ -137,52 +129,24 @@ const disabled = computed(() => {
     <fieldset>
       <legend>Connexion</legend>
 
-      <BasicInput 
-      id="Login" 
-      label="Login" 
-      type="text" 
-      placeholder="Laruiss" 
-      :errorMessage="errorMessageLogin"
-      :validMessage="validMessageLogin" 
-      :modelValue="login" 
-      @input:modelValue="loginValid($event)" 
-      />
-
-      <BasicInput
-      id="email"
-      label="Email"
-      type="email"
-      placeholder="stanislas.ormieres@yahoo.com"
-      :errorMessage="messageEmail"
-      :validMessage="messageEmail"
-      :modelValue="email"
-      @input:modelValue="emailValid($event)"
-      />
-
-      <BasicInput
-      id="password"
-      label="Password"
-      type="password"
-      placeholder="Azerty.123"
-      :errorMessage="messagePassword"
-      :validMessage="messagePassword"
-      :modelValue="password"
-      @input:modelValue="passwordValid($event)"
-      />
-
-      <BasicInput
-      id="confipassword"
-      label="Confirmation password"
-      type="password"
-      placeholder="Azerty.123"
-      :errorMessage="messagePasswordConf"
-      :validMessage="messagePasswordConf"
-      :modelValue="passwordConf"
-      @input:modelValue="passwordConfValid($event)"
-      />
+      <BasicInput id="Login" label="Login" type="text" placeholder="Laruiss" v-model="login"
+        :errorMessage="errorMessageLogin" :validMessage="validMessageLogin" @blur="loginValid($event)"
+        @update:modelValue="login = $event" />
 
 
-        <!-- <div>
+      <BasicInput id="email" label="Email" type="email" placeholder="stanislas.ormieres@yahoo.com" v-model="email"
+        :errorMessage="errorMessageEmail" :validMessage="validMessageEmail" @blur="emailValid($event)"
+        @update:modelValue="email = $event" />
+
+      <BasicInput id="password" label="Password" type="password" placeholder="Azerty.123" v-model="password"
+        :errorMessage="errorMessagePassword" :validMessage="validMessagePassword" @blur="passwordValid($event)"
+        @update:modelValue="password = $event" />
+
+      <BasicInput id="confipassword" label="Confirmation password" type="password" placeholder="Azerty.123"
+        v-model="passwordConf" :errorMessage="errorMessagePasswordConf" :validMessage="validMessagePasswordConf"
+        @blur="passwordConfValid($event)" @update:modelValue="passwordConf = $event" />
+
+      <!-- <div>
           <label for="Login">Login</label>
           <input type="text" id="Login" name="Login" placeholder="Enter the login" @blur="loginValid($event)">
           <p :class="messageClass">
@@ -238,17 +202,10 @@ const disabled = computed(() => {
         <p class="message"></p>
       </div> -->
       <p>
-        <button type="submit" :disabled="disabled"><b>Se Connecter</b></button>
+        <button type="submit" @click="callAPI()"><b>Se Connecter</b></button>
       </p>
     </fieldset>
   </form>
 </template>
 
-<style scoped>
-.valid {
-  color: red;
-}
-
-/* .invalid{
-  color: green;
-} */</style>
+<style scoped></style>

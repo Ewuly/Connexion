@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed,ref } from 'vue'
+import { defineProps, defineEmits, computed } from 'vue'
 
 const props = defineProps({
   id: String,
@@ -14,19 +14,8 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const messageClass = computed(() => {
-  return props.errorMessage !== '' ? 'error' : 'success'
+  return props.errorMessage !== '' ? 'invalid' : 'valid'
 })
-
-function emitUpdate($event: Event) {
-  console.log({$event})
-  const target = $event.target as HTMLInputElement
-  const value = target.value
-}
-
-
-
-
-
 </script>
 
 <template>
@@ -38,6 +27,7 @@ function emitUpdate($event: Event) {
       :placeholder="placeholder"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
+      @blur="$emit('blur', $event)"
     />
     <p :class="messageClass">
       {{ errorMessage }}
@@ -46,7 +36,11 @@ function emitUpdate($event: Event) {
   </div>
 </template>
 
+
 <style scoped>
+.invalid {
+  color: red;
+}
 .flex {
   display: flex;
 }
