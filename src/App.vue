@@ -123,9 +123,9 @@ const disabled = computed(() => {
 </script>
 
 <template>
-  <h1>Mon Application</h1>
 
-  <form action="/login" method="post">
+
+  <form class="styleClass" action="/login" method="post">
     <fieldset>
       <legend>Connexion</legend>
 
@@ -202,10 +202,78 @@ const disabled = computed(() => {
         <p class="message"></p>
       </div> -->
       <p>
-        <button type="submit" @click="callAPI()"><b>Se Connecter</b></button>
+        <button type="submit" :disabled="disabled" @click="callAPI()"><b>Se Connecter</b></button>
       </p>
     </fieldset>
   </form>
 </template>
 
-<style scoped></style>
+<style scoped>
+  /* Styles pour le formulaire de connexion */
+
+  /* Titre principal */
+  h1 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 40px;
+    color: #333;
+  }
+
+  /* Conteneur du formulaire */
+  form {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Titre du formulaire */
+  legend {
+    font-size: 24px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* Labels */
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+  }
+
+  /* Inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+
+
+  /* Messages d'erreur */
+  .error-message {
+    color: #dc3545;
+    margin-top: 5px;
+    font-size: 14px;
+  }
+
+  /* Messages de validation */
+  .valid-message {
+    color: #28a745;
+    margin-top: 5px;
+    font-size: 14px;
+  }
+  
+  
+
+  
+</style>
